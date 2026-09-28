@@ -4,14 +4,255 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Encuesta de Clima Laboral</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* === ESTILOS VISUALES COLORIDOS === */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        }
+
+        h1 {
+            text-align: center;
+            color: #764ba2;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        /* === BARRA DE PROGRESO === */
+        .progress-container {
+            width: 100%;
+            background-color: #edf2f7;
+            border-radius: 25px;
+            margin: 20px 0 8px 0;
+            height: 14px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff7eb3 0%, #ff758c 100%);
+            border-radius: 25px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #texto-progreso {
+            text-align: right;
+            font-size: 14px;
+            color: #718096;
+            margin: 0 0 30px 0;
+            font-weight: 600;
+        }
+
+        /* === FORMULARIO === */
+        .form-group {
+            margin-bottom: 25px;
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border-left: 6px solid #667eea; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .form-group:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 18px;
+            font-size: 17px;
+            color: #2d3748;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff758c;
+            box-shadow: 0 0 0 4px rgba(255, 117, 140, 0.15);
+        }
+
+        /* === OPCIONES (BOTONES RADIO) === */
+        .opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .opciones label {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 15px;
+            background-color: #fff;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 0;
+            transition: all 0.3s ease;
+            user-select: none;
+            color: #4a5568;
+            font-size: 15px;
+        }
+
+        .opciones input[type="radio"] {
+            display: none; 
+        }
+
+        .opciones label:has(input[type="radio"]:checked) {
+            background-color: #fff5f5; 
+            border-color: #ff758c;
+            color: #d53f8c;
+            box-shadow: 0 4px 12px rgba(255, 117, 140, 0.25);
+            transform: scale(1.02);
+            font-weight: 600;
+        }
+
+        .opciones label:hover:not(:has(input[type="radio"]:checked)) {
+            background-color: #edf2f7;
+            border-color: #a0aec0;
+        }
+
+        /* === BOTONES GENERALES === */
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 20px;
+            border: none;
+            border-radius: 50px; 
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(118, 75, 162, 0.5);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 10px rgba(118, 75, 162, 0.3);
+        }
+
+        .nombre-group {
+            border-left-color: #ff758c;
+        }
+
+        /* === VENTANA EMERGENTE (MODAL) === */
+        .modal-overlay {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            transform: scale(0.8);
+            animation: popIn 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            color: #764ba2;
+            font-size: 24px;
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            white-space: pre-wrap; /* Mantiene los saltos de línea del texto */
+        }
+
+        #btnCerrarModal {
+            margin-top: 10px;
+            width: auto;
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>¿Tenemos un buen clima laboral?</h1>
         
+        <div class="progress-container">
+            <div class="progress-bar" id="barra-progreso"></div>
+        </div>
+        <p id="texto-progreso">0% completado</p>
+        
         <form id="encuestaForm">
-            <div class="form-group">
+            <div class="form-group nombre-group">
                 <label for="nombre">Nombre de la persona encuestada:</label>
                 <input type="text" id="nombre" name="nombre" required placeholder="Ingresa tu nombre completo">
             </div>
@@ -22,6 +263,148 @@
         </form>
     </div>
 
-    <script src="script.js"></script>
+    <!-- ESTRUCTURA DE LA VENTANA EMERGENTE -->
+    <div class="modal-overlay" id="modalResultado">
+        <div class="modal-content">
+            <h2 id="modalTitulo">¡Gracias por participar!</h2>
+            <p id="modalMensaje">Cargando resultado...</p>
+            <button type="button" id="btnCerrarModal">Cerrar y Finalizar</button>
+        </div>
+    </div>
+
+    <script>
+        // Lista de preguntas
+        const preguntas = [
+            "¿Te sientes cómodo trabajando en tu equipo actual?",
+            "¿Consideras que hay buena comunicación entre los compañeros?",
+            "¿Tu jefe o líder escucha tus opiniones?",
+            "¿Sientes que tu trabajo es valorado?",
+            "¿En tu entorno laboral se respetan las ideas de todos?",
+            "¿Te sientes motivado al realizar tus tareas?",
+            "¿Hay un ambiente de respeto entre los trabajadores?",
+            "¿Crees que sabes trabajar bien en equipo?",
+            "¿Te consideras una persona responsable con tus tareas?",
+            "¿Sabes manejar conflictos sin generar problemas mayores?",
+            "¿Te adaptas fácilmente a cambios en el trabajo?",
+            "¿Sientes que tienes buena comunicación con tus superiores?",
+            "¿En tu trabajo se promueve el compañerismo?",
+            "¿Te sientes capaz de liderar un grupo cuando es necesario?",
+            "¿Crees que el ambiente laboral influye en tu rendimiento?"
+        ];
+
+        const contenedorPreguntas = document.getElementById('contenedor-preguntas');
+        const formulario = document.getElementById('encuestaForm');
+        const barraProgreso = document.getElementById('barra-progreso');
+        const textoProgreso = document.getElementById('texto-progreso');
+        
+        // Elementos del Modal
+        const modalResultado = document.getElementById('modalResultado');
+        const modalTitulo = document.getElementById('modalTitulo');
+        const modalMensaje = document.getElementById('modalMensaje');
+        const btnCerrarModal = document.getElementById('btnCerrarModal');
+
+        // 1. Generar las preguntas
+        preguntas.forEach((pregunta, index) => {
+            const div = document.createElement('div');
+            div.className = 'form-group';
+
+            const label = document.createElement('label');
+            label.textContent = `${index + 1}. ${pregunta}`;
+            div.appendChild(label);
+
+            const divOpciones = document.createElement('div');
+            divOpciones.className = 'opciones';
+
+            const opciones = ['Sí', 'No', 'No lo sé'];
+            
+            opciones.forEach(opcion => {
+                const labelOpcion = document.createElement('label');
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = `pregunta_${index}`;
+                input.value = opcion;
+                input.required = true; 
+
+                labelOpcion.appendChild(input);
+                labelOpcion.appendChild(document.createTextNode(` ${opcion}`));
+                divOpciones.appendChild(labelOpcion);
+            });
+
+            div.appendChild(divOpciones);
+            contenedorPreguntas.appendChild(div);
+        });
+
+        // 2. Progreso
+        function actualizarProgreso() {
+            let respondidas = 0;
+            preguntas.forEach((_, index) => {
+                if (document.querySelector(`input[name="pregunta_${index}"]:checked`)) {
+                    respondidas++;
+                }
+            });
+            const porcentaje = Math.round((respondidas / preguntas.length) * 100);
+            barraProgreso.style.width = `${porcentaje}%`;
+            textoProgreso.textContent = `${porcentaje}% completado`;
+        }
+
+        formulario.addEventListener('change', actualizarProgreso);
+
+        // 3. Procesar Envío
+        formulario.addEventListener('submit', function(evento) {
+            evento.preventDefault(); 
+
+            const nombreUsuario = document.getElementById('nombre').value;
+            let cantidadSi = 0; 
+
+            const datosEncuesta = {
+                nombre: nombreUsuario,
+                respuestas: {},
+                fecha: new Date().toLocaleString()
+            };
+
+            preguntas.forEach((pregunta, index) => {
+                const respuestaSeleccionada = document.querySelector(`input[name="pregunta_${index}"]:checked`).value;
+                if (respuestaSeleccionada === 'Sí') {
+                    cantidadSi++;
+                }
+                datosEncuesta.respuestas[`Pregunta ${index + 1}`] = {
+                    pregunta: pregunta,
+                    respuesta: respuestaSeleccionada
+                };
+            });
+
+            // Guardar localmente
+            let encuestasGuardadas = JSON.parse(localStorage.getItem('encuestasClimaLaboral')) || [];
+            encuestasGuardadas.push(datosEncuesta);
+            localStorage.setItem('encuestasClimaLaboral', JSON.stringify(encuestasGuardadas));
+
+            // Determinar el mensaje
+            let titulo = `¡Gracias, ${nombreUsuario}!`;
+            let mensaje = "";
+
+            if (cantidadSi >= 0 && cantidadSi <= 4) {
+                mensaje = "🔴 Clima laboral por mejorar\nTu ambiente laboral presenta varios aspectos que pueden mejorarse. Te recomendamos fortalecer la comunicación, el respeto, el trabajo en equipo y la motivación.";
+            } else if (cantidadSi >= 5 && cantidadSi <= 8) {
+                mensaje = "🟠 Clima laboral regular\nTu ambiente laboral tiene algunos aspectos positivos, pero todavía existen oportunidades de mejora. Trabajar en la comunicación y el compañerismo puede ayudar a crear un mejor entorno.";
+            } else if (cantidadSi >= 9 && cantidadSi <= 11) {
+                mensaje = "🟡 Buen clima laboral\nTu ambiente laboral es positivo en varios aspectos. Se observa una buena base de comunicación, respeto y trabajo en equipo. Continúa fortaleciendo estos elementos.";
+            } else if (cantidadSi >= 12 && cantidadSi <= 15) {
+                mensaje = "🟢 Excelente clima laboral\n¡Excelente! Tus respuestas reflejan un ambiente laboral muy positivo. La comunicación, el respeto, la motivación y el trabajo en equipo parecen estar presentes de manera favorable.";
+            }
+
+            // Mostrar el Modal
+            modalTitulo.textContent = titulo;
+            modalMensaje.textContent = mensaje;
+            modalResultado.style.display = 'flex';
+        });
+
+        // 4. Cerrar el Modal y resetear el formulario
+        btnCerrarModal.addEventListener('click', function() {
+            modalResultado.style.display = 'none'; // Oculta la ventana emergente
+            formulario.reset();                    // Limpia el formulario
+            actualizarProgreso();                  // Reinicia la barra de progreso
+            window.scrollTo(0, 0);                 // Sube al principio de la página
+        });
+    </script>
 </body>
 </html>
